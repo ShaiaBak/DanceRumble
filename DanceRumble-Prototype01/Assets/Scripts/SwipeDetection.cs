@@ -6,8 +6,8 @@ public enum SwipeDirection {
     None = 0,
     Left = 1,
     Right = 2,
-    Up = 3,
-    Down = 4
+    Up = 4,
+    Down = 8
 }
 
 public class SwipeDetection : MonoBehaviour {
@@ -15,9 +15,8 @@ public class SwipeDetection : MonoBehaviour {
     private static SwipeDetection instance;
     public static SwipeDetection Instance { get { return instance; } }
 
-    // Direction is a PROPERTY
-    public SwipeDirection UserDirection { set; get; }
-	public ScoreHandler scoreHandler;
+    public SwipeDirection userDirection { set; get; } // SwipeDirection is a PROPERTY
+    public ScoreManager scoreManager;
     public float swipeResistanceX;
     public float swipeResistanceY;
     public Text dirText;
@@ -25,12 +24,12 @@ public class SwipeDetection : MonoBehaviour {
 	private Vector3 touchPosition;
 
     void Start() {
-		scoreHandler = gameObject.AddComponent<ScoreHandler>();
+		scoreManager = GetComponent<ScoreManager>();
         instance = this;
     }
 
     public void Update() {
-        UserDirection = SwipeDirection.None;
+        userDirection = SwipeDirection.None;
 
         // when mouse left clicks
         if (Input.GetMouseButtonDown(0)) {
@@ -46,28 +45,28 @@ public class SwipeDetection : MonoBehaviour {
             // check how far / direction
             if (Mathf.Abs(deltaSwipe.x) > swipeResistanceX) {
                 // Swipe on the X axis
-                UserDirection |= (deltaSwipe.x < 0) ? SwipeDirection.Right : SwipeDirection.Left; // if x is smaller than 0, swipdirection is right, else Left
-                if (UserDirection == SwipeDirection.Left) {
-					dirText.text = "Player Direction:\n" + UserDirection;
-                } else if (UserDirection == SwipeDirection.Right) {
-					dirText.text = "Player Direction:\n" + UserDirection;
+                userDirection |= (deltaSwipe.x < 0) ? SwipeDirection.Right : SwipeDirection.Left; // if x is smaller than 0, swipdirection is right, else Left
+                if (userDirection == SwipeDirection.Left) {
+					dirText.text = "Player Direction:\n" + userDirection;
+                } else if (userDirection == SwipeDirection.Right) {
+					dirText.text = "Player Direction:\n" + userDirection;
                 }
             }
 
             if (Mathf.Abs(deltaSwipe.y) > swipeResistanceY) {
                 // Swipe on the Y axis
-                UserDirection |= (deltaSwipe.y < 0) ? SwipeDirection.Up : SwipeDirection.Down;
-                if (UserDirection == SwipeDirection.Up) {
-					dirText.text = "Player Direction:\n" + UserDirection;
-                } else if (UserDirection == SwipeDirection.Down) {
-					dirText.text = "Player Direction:\n" + UserDirection;
+                userDirection |= (deltaSwipe.y < 0) ? SwipeDirection.Up : SwipeDirection.Down;
+                if (userDirection == SwipeDirection.Up) {
+					dirText.text = "Player Direction:\n" + userDirection;
+                } else if (userDirection == SwipeDirection.Down) {
+					dirText.text = "Player Direction:\n" + userDirection;
                 }
             }
-			scoreHandler.compareDir();
+			scoreManager.compareDir();
         }
     }
 
     public bool IsSwiping(SwipeDirection dir) {
-        return (UserDirection & dir) == dir;
+        return (userDirection & dir) == dir;
     }
 }
